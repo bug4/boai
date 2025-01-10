@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Loader, Sparkles, Code, Cpu, Binary } from 'lucide-react';
 
-function LoadingScreen() {
+function LoadingScreen({ onStartClick, isSplineLoaded }) {
+  const [message, setMessage] = useState("Initializing...");
+  const messages = [
+    "Decoding ancient algorithms...",
+    "Initializing neural networks...",
+    "Connecting to the digital realm...",
+    "Synthesizing knowledge matrices...",
+    "Calibrating quantum processors...",
+    "Harmonizing AI frequencies..."
+  ];
+
+  // This rotates the messages every 2 seconds.
+  useEffect(() => {
+    const messageInterval = setInterval(() => {
+      setMessage(messages[Math.floor(Math.random() * messages.length)]);
+    }, 2000);
+
+    return () => clearInterval(messageInterval);
+  }, []);
+
+  // The button will only be shown if `isSplineLoaded` is true.
+  // If you want to enforce an extra wait time (e.g., 2 seconds),
+  // you can add a setTimeout here that gates `isSplineLoaded`.
+  
   return (
     <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center">
       {/* Background Effects */}
@@ -27,7 +50,9 @@ function LoadingScreen() {
         </div>
 
         <div className="space-y-4 text-center">
-          <h2 className="text-4xl font-bold text-purple-400 tracking-wider">Book of AI</h2>
+          <h2 className="text-4xl font-bold text-purple-400 tracking-wider">
+            Book of AI
+          </h2>
           <div className="flex items-center gap-3 justify-center">
             <Loader className="w-5 h-5 text-purple-500 animate-spin" />
             <p className="text-purple-300 text-lg">Awakening ancient wisdom...</p>
@@ -41,34 +66,24 @@ function LoadingScreen() {
 
         {/* Random Loading Messages */}
         <div className="text-purple-400/60 text-sm text-center h-6">
-          <LoadingMessage />
+          <div className="animate-fade-in">{message}</div>
         </div>
+
+        {/* Start Button appears ONLY if the Spline scene is loaded */}
+        {isSplineLoaded && (
+          <button
+            onClick={onStartClick}
+            className="mt-8 px-8 py-3 bg-purple-500/10 border border-purple-500/50 text-purple-400 
+                     hover:bg-purple-500/20 transition-all duration-300 ease-in-out
+                     flex items-center gap-2 group animate-fade-in"
+          >
+            <span>Enter the Realm</span>
+            <Sparkles className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          </button>
+        )}
       </div>
     </div>
   );
-}
-
-// Random loading messages component
-function LoadingMessage() {
-  const messages = [
-    "Decoding ancient algorithms...",
-    "Initializing neural networks...",
-    "Connecting to the digital realm...",
-    "Synthesizing knowledge matrices...",
-    "Calibrating quantum processors...",
-    "Harmonizing AI frequencies..."
-  ];
-
-  const [message, setMessage] = React.useState(messages[0]);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setMessage(messages[Math.floor(Math.random() * messages.length)]);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return <div className="animate-fade-in">{message}</div>;
 }
 
 export default LoadingScreen;
