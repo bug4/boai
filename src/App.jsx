@@ -11,7 +11,7 @@ function App() {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    // Cleanup function for audio
+    // Cleanup for audio when unmounting
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -30,11 +30,10 @@ function App() {
   };
 
   function onLoad() {
-    // Mark the Spline scene as fully loaded
     setIsSplineLoaded(true);
   }
 
-  // Hide the loading screen only if the Spline is loaded AND the user has clicked the button.
+  // Hide loading screen only if the user has clicked the button AND the scene is loaded
   useEffect(() => {
     if (isSplineLoaded && hasInteracted) {
       setIsLoading(false);
@@ -45,19 +44,19 @@ function App() {
     <div className="relative w-full h-screen">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: 'url(/back.png)', zIndex: 0 }}
       />
 
-      {/* Show loading screen if still loading */}
+      {/* Show the loading screen only if isLoading is true */}
       {isLoading && (
-        <LoadingScreen 
-          onStartClick={handleStart} 
-          isSplineLoaded={isSplineLoaded} 
+        <LoadingScreen
+          onStartClick={handleStart}
+          isSplineLoaded={isSplineLoaded}
         />
       )}
 
-      {/* Spline scene + Chat + Stats */}
+      {/* Main Spline scene and other components */}
       <div className="absolute inset-0" style={{ zIndex: 1 }}>
         <Spline
           scene="https://prod.spline.design/FpJVDSZD2bTr3nJ0/scene.splinecode"

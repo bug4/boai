@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BookOpen, Loader, Sparkles, Code, Cpu, Binary } from 'lucide-react';
 
 function LoadingScreen({ onStartClick, isSplineLoaded }) {
-  const [message, setMessage] = useState("Initializing...");
   const messages = [
     "Decoding ancient algorithms...",
     "Initializing neural networks...",
@@ -11,20 +10,28 @@ function LoadingScreen({ onStartClick, isSplineLoaded }) {
     "Calibrating quantum processors...",
     "Harmonizing AI frequencies..."
   ];
-
-  // This rotates the messages every 2 seconds.
-  useEffect(() => {
-    const messageInterval = setInterval(() => {
-      setMessage(messages[Math.floor(Math.random() * messages.length)]);
-    }, 2000);
-
-    return () => clearInterval(messageInterval);
-  }, []);
-
-  // The button will only be shown if `isSplineLoaded` is true.
-  // If you want to enforce an extra wait time (e.g., 2 seconds),
-  // you can add a setTimeout here that gates `isSplineLoaded`.
   
+  const [message, setMessage] = useState(messages[0]);
+
+  useEffect(() => {
+    let intervalId;
+
+    if (!isSplineLoaded) {
+      // Rotate messages every 2 seconds if spline is still loading
+      intervalId = setInterval(() => {
+        setMessage(messages[Math.floor(Math.random() * messages.length)]);
+      }, 2000);
+    } else {
+      // Once spline is loaded, stop rotating messages
+      // and show a final "System loaded" message
+      setMessage("System loaded! Click the button to continue...");
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [isSplineLoaded, messages]);
+
   return (
     <div className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center">
       {/* Background Effects */}
@@ -50,9 +57,7 @@ function LoadingScreen({ onStartClick, isSplineLoaded }) {
         </div>
 
         <div className="space-y-4 text-center">
-          <h2 className="text-4xl font-bold text-purple-400 tracking-wider">
-            Book of AI
-          </h2>
+          <h2 className="text-4xl font-bold text-purple-400 tracking-wider">Book of AI</h2>
           <div className="flex items-center gap-3 justify-center">
             <Loader className="w-5 h-5 text-purple-500 animate-spin" />
             <p className="text-purple-300 text-lg">Awakening ancient wisdom...</p>
@@ -64,12 +69,12 @@ function LoadingScreen({ onStartClick, isSplineLoaded }) {
           <div className="h-full bg-purple-500/50 animate-progress rounded-full" />
         </div>
 
-        {/* Random Loading Messages */}
+        {/* Random (or Final) Loading Message */}
         <div className="text-purple-400/60 text-sm text-center h-6">
           <div className="animate-fade-in">{message}</div>
         </div>
 
-        {/* Start Button appears ONLY if the Spline scene is loaded */}
+        {/* Show the button ONLY when the Spline scene is loaded */}
         {isSplineLoaded && (
           <button
             onClick={onStartClick}
